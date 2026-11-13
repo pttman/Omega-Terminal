@@ -2,13 +2,13 @@
 
 面向 Windows 的个人桌面终端。统一使用本地 PowerShell 与 SSH，提供拖拽上传、随行助手和内置命令手册。
 
-当前版本：0.1.1 开发预览版。产品设计与尚待完成的范围见 [产品需求文档](docs/产品需求文档.md)，实际交付情况见 [实现与验证记录](docs/实现与验证记录.md)。
+当前版本：0.1.2 开发预览版。产品设计与尚待完成的范围见 [产品需求文档](docs/产品需求文档.md)，实际交付情况见 [实现与验证记录](docs/实现与验证记录.md)。
 
 ## 直接使用
 
-从 [GitHub Releases](https://github.com/pttman/Omega-Terminal/releases) 下载 `Omega-Terminal-Setup-0.1.1-x64.exe`，双击运行中文安装向导，可选择安装目录并创建桌面/开始菜单快捷方式。默认安装到当前用户，安装后可从 Windows“已安装的应用”中卸载。面向 Windows 11 x64，预览版未签名。
+从 [GitHub Releases](https://github.com/pttman/Omega-Terminal/releases) 下载 `Omega-Terminal-Setup-0.1.2-x64.exe`，双击运行中文安装向导，可选择安装目录并创建桌面/开始菜单快捷方式。默认安装到当前用户，安装后可从 Windows“已安装的应用”中卸载。面向 Windows 11 x64，预览版未签名。
 
-同时提供 `SHA256SUMS.txt`，可用 `Get-FileHash .\Omega-Terminal-Setup-0.1.1-x64.exe -Algorithm SHA256` 核对下载完整性。
+同时提供 `SHA256SUMS.txt`，可用 `Get-FileHash .\Omega-Terminal-Setup-0.1.2-x64.exe -Algorithm SHA256` 核对下载完整性。
 
 本地终端：点击首页的 Windows PowerShell 卡片。本地仅保留此入口，旧的 PowerShell 7 / CMD 默认设置自动迁移到 Windows PowerShell。原生终端支持直接输入；底部命令栏提供应用补全、命令编辑及 AI/手册填入。按 Enter 执行命令栏中的实际内容。
 
@@ -16,7 +16,7 @@
 
 远程连接：点击“新建连接”，填写主机与认证方式。连接前先检测地址与 SSH 服务，平滑进度条显示实际阶段；连通后再输入密码或私钥口令，并核对主机指纹。密码页提供“保存并连接”和“直接连接”：前者在认证成功后使用 Windows 系统加密保存在本机，下次可直接连接，后者不保存本次密码。编辑连接中可以清除密码；修改地址、端口、用户名或认证方式后旧密码自动清除。私钥口令只用于此次连接。较小窗口中的表单可以滚动。
 
-SSH Bash 终端在初始化完成后显示干净的提示符，初始化脚本不会刷屏；服务器欢迎信息、最近登录等收在右上角可展开的“登录信息”中。后续命令输出正常显示，不修改远端登录配置。
+SSH Bash 终端在初始化完成后显示干净的提示符，初始化脚本不会刷屏；服务器欢迎信息、最近登录等收在右上角可展开的“登录信息”中。后续命令输出正常显示，不修改远端登录配置。Bash 提示符中的主目录标记与下级路径留出空格，例如 `Ω ~ /yiask #`；实际工作目录保持原样。
 
 连接进度按实际已完成的阶段平滑推进，快速预检约用 1.5 秒呈现完整过渡；较慢的网络仍按实际耗时等待，取消和失败即时响应。系统启用减少动态效果时跳过这段展示延迟。
 
@@ -80,4 +80,4 @@ npm run test:packaged
 
 ## 打包与发布
 
-运行 `npm run release`（或 `npm run release:setup`）生成 `artifacts/Omega-Terminal-Setup-0.1.1-x64.exe` 与 `SHA256SUMS.txt`。默认发布 Setup 安装程序；`npm run release:zip` 仅用于需要免安装包时。发布范围与检查步骤见 [发布说明](docs/发布说明.md)。源码仓库只保留构建所需的代码、资源、锁文件、测试与文档。
+运行 `npm run release`（或 `npm run release:setup`）生成 `artifacts/Omega-Terminal-Setup-0.1.2-x64.exe` 与 `SHA256SUMS.txt`。默认发布 Setup 安装程序；`npm run release:zip` 仅用于需要免安装包时。发布范围与检查步骤见 [发布说明](docs/发布说明.md)。源码仓库只保留构建所需的代码、资源、锁文件、测试与文档。

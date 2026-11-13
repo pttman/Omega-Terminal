@@ -1,6 +1,6 @@
 {
   "name": "person-terminal",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "type": "module",
   "description": "Omega Terminal: a personal Windows workspace for PowerShell, SSH and SFTP.",
@@ -23,7 +23,7 @@
     "test:app-dialogs": "node scripts/app-dialogs-test.mjs",
     "release:zip": "npm run pack && node scripts/package-release.mjs",
     "release": "npm run release:setup",
-    "release:setup": "npm run build && electron-builder --win nsis --x64 --config.electronDist=node_modules/electron/dist && node scripts/package-release.mjs --setup"
+    "release:setup": "npm run build && electron-builder --win nsis --x64 --config.electronDist=node_modules/electron/dist --config.directories.output=release-%npm_package_version% && node scripts/package-release.mjs --setup"
   },
   "build": {
     "appId": "local.person.terminal",

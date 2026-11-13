@@ -12,7 +12,7 @@ const name=setup?`Omega-Terminal-Setup-${pkg.version}-x64.exe`:`Omega-Terminal-$
 const archive=path.join(output,name);
 if(fs.existsSync(archive))throw new Error(`发布文件已存在，请先归档或移走：${archive}`);
 if(setup){
-  const installer=path.resolve('release',name);
+  const installer=path.resolve(`release-${pkg.version}`,name);
   if(!fs.existsSync(installer))throw new Error('请先生成 NSIS 安装程序');
   fs.copyFileSync(installer,archive);
 }else{

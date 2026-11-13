@@ -2,6 +2,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
+const os=require('node:os');
 const {execFileSync}=require('node:child_process');
 const {sshPrompt}=require('../electron/prompt.cjs');
 const {SshStartup}=require('../electron/startup.cjs');
@@ -51,3 +52,23 @@ for(const existing of ['PROMPT_COMMAND="printf existing"','PROMPT_COMMAND=("prin
     assert.equal(Buffer.from(marker[1],'base64').toString('utf8'),output.match(/CWD:([^\r\n]+)/)[1]);
   });
 }
+
+test('Bash home subdirectories show a space after tilde while cwd and literal filenames stay intact',t=>{
+  const bash=bashPath();if(!bash)return t.skip('Bash is not installed');
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'omega-prompt-'));
+  const home=path.join(root,'home');fs.mkdirSync(home);
+  for(const directory of ['yiask','yiask/nested folder','$(printf INJECTED)'])fs.mkdirSync(path.join(home,directory),{recursive:true});
+  fs.mkdirSync(path.join(root,'outside'));
+  try{
+    for(const [directory,expected] of [['.','~'],['yiask','~ /yiask'],['yiask/nested folder','~ /yiask/nested folder'],['$(printf INJECTED)','~ /$(printf INJECTED)'],['../outside',null]]){
+      const quoted="'"+directory.replaceAll("'","'\\''")+"'";
+      const script=`HOME="$PWD"; ${sshPrompt('spacing-test').trim()}; cd -- ${quoted}; __person_prompt; printf 'REAL:%s\\n' "$PWD"; printf 'PROMPT:%s\\n' "\${PS1@P}"`;
+      const output=execFileSync(bash,['--noprofile','--norc','-c',script],{cwd:home,encoding:'utf8',windowsHide:true,timeout:10000});
+      const cwd=output.match(/REAL:([^\r\n]+)/)[1];
+      const displayed=output.match(/PROMPT:([^\r\n]+)/)[1].replace(/\x1b\[[0-9;]*m/g,'');
+      assert.ok([`Ω ${expected??cwd} $ `,`Ω ${expected??cwd} # `].includes(displayed),`Unexpected prompt: ${displayed}`);
+      const marker=output.match(/\x1b\]777;spacing-test;P;([^\x07]+)\x07/);
+      assert.equal(Buffer.from(marker[1],'base64').toString('utf8'),cwd);
+    }
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
