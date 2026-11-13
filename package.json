@@ -1,6 +1,6 @@
 {
   "name": "person-terminal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "Omega Terminal: a personal Windows workspace for PowerShell, SSH and SFTP.",
@@ -21,7 +21,9 @@
     "check": "npm run build && npm test",
     "pack": "npm run build && electron-builder --win --dir --config.electronDist=node_modules/electron/dist",
     "test:app-dialogs": "node scripts/app-dialogs-test.mjs",
-    "release:zip": "npm run pack && node scripts/package-release.mjs"
+    "release:zip": "npm run pack && node scripts/package-release.mjs",
+    "release": "npm run release:setup",
+    "release:setup": "npm run build && electron-builder --win nsis --x64 --config.electronDist=node_modules/electron/dist && node scripts/package-release.mjs --setup"
   },
   "build": {
     "appId": "local.person.terminal",
@@ -41,12 +43,37 @@
       "electron/integration.ps1"
     ],
     "win": {
-      "target": "dir",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "signAndEditExecutable": true,
       "icon": "public/omega.ico",
       "signExecutable": false
     },
-    "npmRebuild": false
+    "npmRebuild": false,
+    "nsis": {
+      "artifactName": "Omega-Terminal-Setup-${version}-${arch}.exe",
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Omega Terminal",
+      "installerIcon": "public/omega.ico",
+      "uninstallerIcon": "public/omega.ico",
+      "installerLanguages": [
+        "zh_CN",
+        "en_US"
+      ],
+      "language": "2052",
+      "deleteAppDataOnUninstall": false
+    }
   },
   "dependencies": {
     "@xterm/addon-fit": "0.11.0",

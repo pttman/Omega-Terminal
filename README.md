@@ -2,13 +2,13 @@
 
 面向 Windows 的个人桌面终端。统一使用本地 PowerShell 与 SSH，提供拖拽上传、随行助手和内置命令手册。
 
-当前版本：0.1.0 开发预览版。产品设计与尚待完成的范围见 [产品需求文档](docs/产品需求文档.md)，实际交付情况见 [实现与验证记录](docs/实现与验证记录.md)。
+当前版本：0.1.1 开发预览版。产品设计与尚待完成的范围见 [产品需求文档](docs/产品需求文档.md)，实际交付情况见 [实现与验证记录](docs/实现与验证记录.md)。
 
 ## 直接使用
 
-从 [GitHub Releases](https://github.com/pttman/Omega-Terminal/releases) 下载 `Omega-Terminal-0.1.0-win-x64.zip`，完整解压后打开 `Omega Terminal.exe`。请保留解压后的整个文件夹，其中包含运行依赖。面向 Windows 11 x64，预览版免安装、未签名。
+从 [GitHub Releases](https://github.com/pttman/Omega-Terminal/releases) 下载 `Omega-Terminal-Setup-0.1.1-x64.exe`，双击运行中文安装向导，可选择安装目录并创建桌面/开始菜单快捷方式。默认安装到当前用户，安装后可从 Windows“已安装的应用”中卸载。面向 Windows 11 x64，预览版未签名。
 
-同时提供 `SHA256SUMS.txt`，可用 `Get-FileHash .\Omega-Terminal-0.1.0-win-x64.zip -Algorithm SHA256` 核对下载完整性。
+同时提供 `SHA256SUMS.txt`，可用 `Get-FileHash .\Omega-Terminal-Setup-0.1.1-x64.exe -Algorithm SHA256` 核对下载完整性。
 
 本地终端：点击首页的 Windows PowerShell 卡片。本地仅保留此入口，旧的 PowerShell 7 / CMD 默认设置自动迁移到 Windows PowerShell。原生终端支持直接输入；底部命令栏提供应用补全、命令编辑及 AI/手册填入。按 Enter 执行命令栏中的实际内容。
 
@@ -76,8 +76,8 @@ npm run test:packaged
 - 参数补全目前是有限的静态规格；远程命令名候选是常用命令目录，不能证明对应工具已安装；路径候选通过本机文件系统或同连接 SFTP 查询。
 - 跳板机、SSH Agent、端口转发、文件夹上传、下载面板、断点续传、工作区恢复、自定义快捷键编辑尚未实现。
 - 尚未在真实生产服务器、长时间压力、高 DPI 多档和中文输入法组合中完成全面验收。AI 接口用本机测试服务验证，真实供应商仍需接入测试。
-- Windows 预览包未签名；未提供自动更新或正式安装程序。
+- Windows 预览版未签名；已提供 Setup 安装向导，暂未提供自动更新。
 
 ## 打包与发布
 
-运行 `npm run release:zip` 生成 `artifacts/Omega-Terminal-0.1.0-win-x64.zip` 与 `SHA256SUMS.txt`。发布范围与检查步骤见 [发布说明](docs/发布说明.md)。源码仓库只保留构建所需的代码、资源、锁文件、测试与文档。
+运行 `npm run release`（或 `npm run release:setup`）生成 `artifacts/Omega-Terminal-Setup-0.1.1-x64.exe` 与 `SHA256SUMS.txt`。默认发布 Setup 安装程序；`npm run release:zip` 仅用于需要免安装包时。发布范围与检查步骤见 [发布说明](docs/发布说明.md)。源码仓库只保留构建所需的代码、资源、锁文件、测试与文档。
