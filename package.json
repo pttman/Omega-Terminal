@@ -1,0 +1,80 @@
+{
+  "name": "person-terminal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Omega Terminal: a personal Windows workspace for PowerShell, SSH and SFTP.",
+  "author": "pttman",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "tsc --noEmit && vite build",
+    "start": "electron .",
+    "test": "node --test tests/*.test.cjs",
+    "test:desktop": "node scripts/desktop-test.mjs",
+    "test:themes": "node scripts/theme-test.mjs",
+    "test:prompt": "node scripts/prompt-test.mjs",
+    "test:ui-credentials": "node scripts/ui-credentials-test.mjs",
+    "test:motion": "node scripts/motion-test.mjs",
+    "test:split": "node scripts/split-test.mjs",
+    "test:packaged": "node scripts/desktop-test.mjs --packaged",
+    "check": "npm run build && npm test",
+    "pack": "npm run build && electron-builder --win --dir --config.electronDist=node_modules/electron/dist",
+    "test:app-dialogs": "node scripts/app-dialogs-test.mjs",
+    "release:zip": "npm run pack && node scripts/package-release.mjs"
+  },
+  "build": {
+    "appId": "local.person.terminal",
+    "productName": "Omega Terminal",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "src/shared/manual.json",
+      "package.json",
+      "public/omega.ico"
+    ],
+    "asarUnpack": [
+      "node_modules/node-pty/**/*",
+      "electron/integration.ps1"
+    ],
+    "win": {
+      "target": "dir",
+      "signAndEditExecutable": true,
+      "icon": "public/omega.ico",
+      "signExecutable": false
+    },
+    "npmRebuild": false
+  },
+  "dependencies": {
+    "@xterm/addon-fit": "0.11.0",
+    "@xterm/addon-search": "0.16.0",
+    "@xterm/xterm": "6.0.0",
+    "lucide-react": "1.72.0",
+    "node-pty": "1.1.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "ssh2": "1.17.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "electron": "45.3.1",
+    "electron-builder": "26.18.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pttman/Omega-Terminal.git"
+  },
+  "homepage": "https://github.com/pttman/Omega-Terminal",
+  "bugs": {
+    "url": "https://github.com/pttman/Omega-Terminal/issues"
+  }
+}

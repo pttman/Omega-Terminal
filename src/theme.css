@@ -1,0 +1,83 @@
+@font-face{font-family:'JetBrains Mono';src:url('/fonts/JetBrainsMono-Regular.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'JetBrains Mono';src:url('/fonts/JetBrainsMono-Bold.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
+:root{--interface-font:'Segoe UI Variable','Segoe UI','Microsoft YaHei UI',sans-serif;--terminal-font:'JetBrains Mono','Cascadia Mono',Consolas,monospace}
+.brand strong{font-family:var(--interface-font)}
+code,pre,kbd,.command-composer>textarea,.completion-list>button{font-family:var(--terminal-font)}
+.terminal-surface,.command-composer>textarea{font-variant-ligatures:none}
+.terminal-surface .xterm-rows span.omega-prompt-glyph{display:inline-block;font-family:var(--interface-font);font-weight:650}
+
+/* Shared surfaces and interaction states follow the selected terminal palette. */
+:root[data-palette]{color:var(--text);background:var(--bg)}
+[data-palette] :is(.titlebar,.statusbar,.pane-header,.terminal-toolbar,.composer-wrap,.modal,.assistant,.workspace-switch,.local-card,.host-card,.hosts-empty,.info-card,.terminal-search,.completion-list,.pane-confirm,.transfer-panel,.toast,.zoom-toast){background:var(--panel);color:var(--text);border-color:var(--border)}
+[data-palette] :is(.command-composer,.assistant-target,.ai-input,.attachment-editor,.palette-input,.directory-list,.command-result,.host-preview,.suggestion-chips button,.manual-list>button,.chat-message.from-user){background:var(--input);color:var(--text);border-color:var(--border)}
+[data-palette] .filter-input{background:var(--input)}
+[data-palette] .settings-nav button{color:var(--muted)}
+[data-palette] .transfer-panel>header{color:var(--text)}
+[data-palette] :is(.pane-confirm pre,.manual-detail pre,.fingerprint-code,.attachment-editor textarea){background:var(--input);color:var(--text);border-color:var(--border)}
+[data-palette] :is(.brand strong span,.workspace-tab.selected,.section-title h2,.host-card-info h3,.hosts-empty h3,.modal-heading h2,.assistant-empty h3,.manual-detail h3,.settings-content h3,.settings-content h4,.toggle-row strong,.info-card strong,.host-preview strong,.palette-results strong,.manual-list strong,.transfer-title>strong,.identity-heading strong,.chat-text,.chat-message.from-user .chat-text){color:var(--text)}
+[data-palette] :is(.main-nav button,.tools-nav button,.local-nav button,.group-nav button,.workspace-tab,.window-controls button,.local-card div>span,.local-card>svg,.filter-input,.view-toggle button,.host-card-info>code,.host-card-tags span,.host-card-bottom>span,.local-storage-note strong,.workspace-tips strong,.workspace-tips>button,.modal label,.confirm-description,.identity-heading,.identity-heading p,.pane-confirm p,.pane-header,.assistant-tabs button,.assistant-target select,.suggestion-chips button,.assistant-empty>p,.manual-detail p,.manual-detail label,.directory-list>button,.palette-results>button,.shortcut-list>div,.shortcut-list kbd,.info-card p,.toast button){color:var(--muted)}
+[data-palette] :is(.sidebar-section-heading,.local-storage-note div>span,.page-breadcrumb span:last-child,.eyebrow,.workspace-tips p,.workspace-tips p>span,.page-footer,.statusbar,.statusbar button,.status-separator,.composer-footer,.pane-type,.pane-status,.optional,.modal-heading p,.toggle-row small,.version-label,.host-preview div>span,.color-field,.completion-list>button small,.completion-help,.completion-list kbd,.assistant-target>svg,.suggestion-chips svg,.ai-connect-note,.ai-connect-note>span,.ai-input-toolbar>span,.ai-input-toolbar>.icon-button,.assistant-input-note,.assistant-input-note button,.chat-label,.chat-message.from-user .chat-label,.code-heading,.dependency-note,.attachment-label,.attachment-editor label,.manual-caption,.manual-list div>span,.manual-detail .category-label,.manual-detail .manual-source,.palette-results div>span,.directory-loading,.transfer-panel header>span,.transfer-title>span,.transfer-destination,.transfer-meta,.small-empty){color:var(--subtle)}
+[data-palette] :is(.text-button,.host-card-bottom>button:not(.icon-button),.ai-connect-note button,.ai-generating,.zoom-toast button,.transfer-title>svg,.manual-list code,.assistant-logo,.beta-badge,.new-label){color:var(--accent)}
+[data-palette] :is(.command-composer>textarea,.ai-input>textarea,.completion-list>button,.command-result pre){color:var(--text)}
+[data-palette] :is(input,textarea)::placeholder{color:var(--subtle);opacity:1}
+[data-palette] :is(.modal-actions,.settings-nav,.modal .toggle-row,.shortcut-list>div,.host-card-bottom,.host-card-tags span,.ai-connect-note,.code-heading,.transfer-panel>header,.transfer-item,.completion-help,.beta-badge,.new-label){border-color:var(--border-soft)}
+[data-palette] :is(.workspace-avatar,.section-count,.tip-icon,.pane-type,.status-transfer-count){background:var(--panel-hover);color:var(--muted);border-color:var(--border)}
+[data-palette] :is(.assistant-logo,.ai-orbit,.empty-server-illustration>svg){background:var(--accent-bg);color:var(--accent);border-color:var(--border)}
+[data-palette] :is(.host-symbol,.profile-icon,.mini-terminal){background:var(--accent-bg);color:var(--accent);border-color:var(--border)}
+[data-palette] .host-symbol.blue{color:var(--text)}
+[data-palette] .host-symbol.orange{color:var(--warning)}
+[data-palette] .host-symbol.purple{color:var(--accent)}
+[data-palette] :is(.profile-icon.cmd,.mini-terminal.cmd){background:var(--panel-hover);color:var(--text);border-color:var(--border)}
+[data-palette] :is(.empty-orbit,.color-dot.selected:after){border-color:var(--border-hover)}
+[data-palette] .empty-server-illustration{color:var(--accent)}
+[data-palette] .empty-plus{background:var(--accent-fill);color:var(--on-accent);border-color:var(--panel)}
+[data-palette] :is(.empty-node,.local-indicator,.storage-dot,.status-dot.connected,.page-footer .status-dot){background:var(--accent-fill)}
+[data-palette] :is(.add-host-card,.hosts-empty){color:var(--muted);border-color:var(--border)}
+[data-palette] .hosts-empty p{color:var(--muted)}
+[data-palette] .panes-grid{background:var(--border)}
+[data-palette] .terminal-pane.focused{border-color:var(--border-hover)}
+[data-palette] :is(.connections-page,.modal,.settings-content,.assistant-messages,.manual-content,.transfer-items){scrollbar-color:var(--border) transparent}
+[data-palette] select{color-scheme:inherit}
+[data-palette] option{background:var(--panel);color:var(--text)}
+[data-palette] :is(.modal .toggle-row>input,.check-row input){accent-color:var(--accent)}
+[data-palette] .modal-backdrop{background:var(--backdrop)}
+[data-palette] :is(.transfer-panel,.toast,.pane-confirm,.completion-list,.terminal-search,.appearance-panel,.zoom-toast){box-shadow:var(--shadow)}
+
+/* Hover, press and selection use small, consistent amounts of the accent. */
+[data-palette] :is(.icon-button,.workspace-tab,.workspace-tab>button,.appearance-toggle,.main-nav button,.tools-nav button,.local-nav button,.group-nav button,.sidebar-search,.workspace-switch,.window-controls button,.view-toggle button,.settings-nav button,.suggestion-chips button,.manual-list>button,.palette-results>button,.directory-list>button,.theme-cards>button,.completion-list>button,.button,.run-button,.ai-send,.insert-button){transition:background-color .12s ease,color .12s ease,border-color .12s ease}
+[data-palette] :is(.icon-button,.workspace-tab,.workspace-tab>button,.appearance-toggle,.main-nav button,.tools-nav button,.local-nav button,.group-nav button,.sidebar-search,.workspace-switch,.window-controls button,.view-toggle button,.settings-nav button,.suggestion-chips button,.manual-list>button,.palette-results>button,.directory-list>button,.theme-cards>button,.completion-list>button):hover:not(:disabled){background:var(--panel-hover);color:var(--text)}
+[data-palette] :is(.local-card,.host-card,.add-host-card):hover{background:var(--panel-hover);border-color:var(--border-hover);color:var(--text)}
+[data-palette] :is(.main-nav,.tools-nav,.group-nav) .active{background:var(--accent-bg)!important;color:var(--accent)!important}
+[data-palette] .main-nav .active small{color:var(--accent)}
+[data-palette] :is(.view-toggle button.selected,.settings-nav button.selected,.theme-cards>button.selected,.completion-list>button.selected){background:var(--accent-bg);color:var(--accent)}
+[data-palette] .assistant-tabs button.selected{color:var(--accent);border-bottom-color:var(--accent)}
+[data-palette] .assistant-tabs button:hover{color:var(--text)}
+[data-palette] .workspace-tab.selected{background:var(--bg);color:var(--text)}
+[data-palette] :is(.button.primary,.ai-send){background:var(--accent-fill);border-color:var(--accent-fill);color:var(--on-accent)}
+[data-palette] :is(.button.primary,.ai-send):hover:not(:disabled){background:var(--accent-hover);border-color:var(--accent-hover)}
+[data-palette] :is(.button.secondary,.hosts-empty .button,.run-button,.insert-button,.pending-command){background:var(--accent-bg);color:var(--accent);border-color:var(--border)}
+[data-palette] .insert-button{border-top-color:var(--border)!important}
+[data-palette] :is(.button.secondary,.hosts-empty .button,.run-button,.insert-button,.pending-command):hover:not(:disabled){background:var(--panel-hover);color:var(--accent);border-color:var(--border-hover)}
+[data-palette] :is(.text-button,.workspace-tips>button,.statusbar button):hover{color:var(--text)}
+[data-palette] :is(.icon-button,.workspace-tab,.workspace-tab>button,.appearance-toggle,.main-nav button,.tools-nav button,.local-nav button,.group-nav button,.sidebar-search,.workspace-switch,.window-controls button,.view-toggle button,.settings-nav button,.local-card,.add-host-card,.suggestion-chips button,.manual-list>button,.palette-results>button,.directory-list>button,.theme-cards>button,.completion-list>button,.button.secondary,.hosts-empty .button,.run-button,.insert-button,.pending-command):active:not(:disabled){background:var(--pressed);color:var(--accent)}
+[data-palette] :is(.button.primary,.ai-send):active:not(:disabled){background:var(--accent-pressed);color:var(--on-accent)}
+[data-palette] :is(input,textarea,select):focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--focus-ring)}
+[data-palette] :is(.command-composer,.ai-input,.input-action,.filter-input,.palette-input):focus-within{border-color:var(--accent);box-shadow:0 0 0 2px var(--focus-ring)}
+[data-palette] :is(.command-composer>textarea,.ai-input>textarea,.palette-input input,.filter-input input,.terminal-search input,.input-action>input,.assistant-target select,.password-input>input):focus{box-shadow:none}
+[data-palette] .password-input>input,[data-palette] .password-input>input:focus{border:0;outline:none;background:transparent;box-shadow:none}
+[data-palette] .password-input:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px var(--focus-ring)}
+[data-palette] .window-controls button.window-close:hover{background:var(--danger-bg);color:var(--danger)}
+[data-palette] .window-controls button.window-close:active{background:color-mix(in srgb,var(--panel) 84%,var(--danger));color:var(--danger)}
+[data-palette] .favorite{color:var(--warning)!important}
+[data-palette] .host-card-tags .production-label{color:var(--warning);border-color:var(--border)}
+[data-palette] :is(.error-message,.session-error){background:var(--danger-bg);color:var(--danger);border-color:var(--danger)}
+[data-palette] :is(.transfer-error,.transfer-item.error .transfer-title>span){color:var(--danger)}
+[data-palette] .terminal-search small{color:var(--warning)}
+[data-palette] .success-message{color:var(--accent)}
+[data-palette] .ai-question{color:var(--text);border-color:var(--accent)}
+[data-palette] .progress-track{background:var(--accent-bg)}
+[data-palette] .progress-track>span{background:var(--accent-fill)}
+[data-palette] .transfer-item.error .progress-track>span{background:var(--danger)}
+[data-palette] .drop-overlay{background:color-mix(in srgb,var(--panel) 94%,transparent);color:var(--accent);border-color:var(--accent)}
+[data-palette] .drop-overlay small{color:var(--muted)}
+@media(prefers-reduced-motion:reduce){[data-palette] *{transition:none!important}}

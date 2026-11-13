@@ -1,0 +1,10 @@
+import { useEffect, useState } from 'react';
+import { ChevronRight, Folder, LoaderCircle, Upload } from 'lucide-react';
+import type { Session } from '../types';
+import Modal from './Modal';
+export default function UploadDirectory({session,files,onClose,onConfirm}:{session:Session;files:string[];onClose:()=>void;onConfirm:(directory:string)=>void}){
+  const [directory,setDirectory]=useState('');const [folders,setFolders]=useState<string[]>([]);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
+  useEffect(()=>{void window.person.sftpHome(session.id).then(setDirectory).catch(error=>setError(error.message));},[session.id]);
+  useEffect(()=>{if(!directory.startsWith('/'))return;let cancelled=false;setBusy(true);void window.person.sftpList(session.id,directory).then(values=>{if(!cancelled){setFolders(values);setError('');}}).catch(error=>{if(!cancelled)setError(error.message);}).finally(()=>{if(!cancelled)setBusy(false);});return()=>{cancelled=true;};},[directory,session.id]);
+  return <Modal title="选择上传目录" subtitle={`${files.length} 个文件 → ${session.host}`} onClose={onClose}><label>远程绝对目录<input value={directory} placeholder="/home/user" onChange={event=>setDirectory(event.target.value)}/></label><div className="directory-list"><button onClick={()=>setDirectory(old=>old.slice(0,old.lastIndexOf('/'))||'/')}><Folder size={16}/>上一级目录</button>{busy?<div className="directory-loading"><LoaderCircle size={16} className="spin"/>读取目录…</div>:folders.map(folder=><button key={folder} onClick={()=>setDirectory(old=>`${old.replace(/\/$/,'')}/${folder}`)}><Folder size={16}/>{folder}<ChevronRight size={14}/></button>)}</div><p className="muted small">此目录会在本会话内复用；拖入其他会话时会重新确定目标。</p>{error&&<div className="error-message">{error}</div>}<div className="modal-actions"><button className="button secondary" onClick={onClose}>取消</button><button className="button primary" disabled={!directory.startsWith('/')||busy||!!error} onClick={()=>onConfirm(directory)}><Upload size={15}/>上传到此目录</button></div></Modal>;
+}
