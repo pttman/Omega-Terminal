@@ -1,14 +1,58 @@
 # Omega Terminal
 
-面向 Windows 的个人桌面终端。统一使用本地 PowerShell 与 SSH，提供拖拽上传、随行助手和内置命令手册。
+简洁的 Windows 桌面终端，把本地 PowerShell、SSH 连接、SFTP 上传和命令助手放在一个窗口中。面向个人开发、服务器维护和日常命令操作。
+
+A focused Windows terminal for PowerShell, SSH and SFTP, with split panes, an AI command assistant and an offline command manual.
+
+**Windows 11 x64 · 中文界面 · v0.1.9 Preview**
+
+[下载安装](https://github.com/pttman/Omega-Terminal/releases/tag/v0.1.9) · [更新记录](docs/发布说明.md) · [问题反馈](https://github.com/pttman/Omega-Terminal/issues)
 
 当前版本：0.1.9 开发预览版。产品设计与尚待完成的范围见 [产品需求文档](docs/产品需求文档.md)，实际交付情况见 [实现与验证记录](docs/实现与验证记录.md)。
 
-## 直接使用
+## 功能概览
+
+| 功能 | 当前能力 |
+| --- | --- |
+| 本地与远程终端 | Windows PowerShell 5.1；SSH 密码、私钥和交互认证，主机指纹校验 |
+| 连接管理 | 启动直接显示配置列表，搜索、分组、收藏、双击连接，右侧抽屉新建和编辑 |
+| 多标签与分屏 | 拖动已有会话向四个方向分屏，支持嵌套布局、比例调整和拆回标签，最多四分屏 |
+| 连续命令栏 | 命令、路径与历史补全；顺序排队、持续输出、中断；交互程序期间自动暂停 |
+| SFTP 上传 | 将文件拖入 SSH 终端，支持多文件队列、进度、取消、重试及同名处理 |
+| AI 命令助手 | 接入兼容 Chat Completions 的服务；解释、追问、生成命令，再填入原会话检查执行 |
+| 离线命令手册 | 29 个 PowerShell、CMD 与 Linux Bash 示例；搜索、填写参数，按当前标签和分屏自动匹配 |
+| 阅读与外观 | 12 套主题、JetBrains Mono、粉色方块光标、单分屏字号缩放、输出搜索、纯终端全屏 |
+| 配置与凭据 | 本机保存配置，Windows 加密保存选定凭据，导入和导出非敏感连接配置 |
+
+## 界面预览
+
+连接配置列表：
+
+![Omega Terminal v0.1.9 连接配置列表](docs/images/connections.png)
+
+<details>
+<summary>查看 SSH 终端与命令手册</summary>
+
+![Omega Terminal v0.1.9 SSH 终端与 Bash 命令手册](docs/images/terminal-manual.png)
+
+</details>
+
+截图使用隔离的演示配置与本机测试服务，服务器名称和地址均为示例。
+
+## 下载与安装
 
 从 [GitHub Releases](https://github.com/pttman/Omega-Terminal/releases) 下载 `Omega-Terminal-Setup-0.1.9-x64.exe`，双击运行中文安装向导，可选择安装目录并创建桌面/开始菜单快捷方式。默认安装到当前用户，安装后可从 Windows“已安装的应用”中卸载。面向 Windows 11 x64，预览版未签名。
 
 同时提供 `SHA256SUMS.txt`，可用 `Get-FileHash .\Omega-Terminal-Setup-0.1.9-x64.exe -Algorithm SHA256` 核对下载完整性。
+
+## 快速上手
+
+1. **本地命令**：打开 Windows PowerShell，直接在终端输入，或展开命令栏后输入并按 Enter。
+2. **远程连接**：新建连接，填写地址、用户名和认证方式，保存后双击连接并核对主机指纹。
+3. **上传文件**：将文件从资源管理器拖到 SSH 终端区域，根据当前目录或手动选择的目录上传。
+4. **查找命令**：打开命令手册，选择任务并填写参数，再填入命令栏；AI 助手需要先配置自己的模型服务。
+
+## 常用操作
 
 启动后直接显示连接配置列表，无侧栏；顶部提供搜索、新建连接、本地终端、分组/收藏筛选和卡片/列表切换。连接卡片双击打开（键盘 Enter / 空格也可连接），悬停可收藏、编辑或删除；编辑与删除分开排列，删除前需确认。
 
@@ -40,6 +84,34 @@ AI：打开“设置 → AI 服务”，填写兼容 Chat Completions 格式的�
 
 外观菜单、登录信息和传输面板在鼠标离开 1 秒后收起，移回可取消收起。右下角版本号可打开关于信息；有活动会话或传输时，退出会显示随主题变化的应用内确认弹窗。
 
+## 快捷键
+
+| 操作 | 快捷键 |
+| --- | --- |
+| 新建本地终端 | `Ctrl+Shift+T` |
+| 切换标签 / 反向切换 | `Ctrl+Tab` / `Ctrl+Shift+Tab` |
+| 搜索主机和操作 | `Ctrl+K` 或 `Ctrl+Shift+P` |
+| 搜索当前终端输出 | `Ctrl+Shift+F` |
+| 调整所在分屏的字号 | `Ctrl+鼠标滚轮`；`Ctrl+0` 恢复默认 |
+| 复制选区 | `Ctrl+C`、`Ctrl+Shift+C` 或 `Ctrl+Insert` |
+| 中断命令 | 无选区时 `Ctrl+C`；命令栏内会同时清空待执行队列 |
+| 补全 / 选择候选 / 收起候选 | `Tab` / `↑` `↓` / `Esc` |
+| 纯终端全屏 / 恢复窗口 | `F11` |
+
+纯终端全屏期间保留终端程序自身的键盘操作，恢复窗口使用 `F11`。
+
+## 技术栈
+
+| 层次 | 实现 |
+| --- | --- |
+| 桌面运行环境 | Electron，主进程与渲染进程隔离，通过受限 IPC 通信 |
+| 界面 | React、TypeScript、Vite、Lucide 图标 |
+| 终端显示 | xterm.js，适配终端尺寸与缓冲区搜索 |
+| 本地进程 | node-pty 对接 Windows ConPTY，运行 Windows PowerShell |
+| 远程连接与传输 | ssh2 提供 SSH 与 SFTP |
+| AI 适配 | 兼容 Chat Completions 的 HTTP 接口，可接本机或远程服务 |
+| 验证与打包 | Node.js 测试、Playwright/Electron 桌面验证、electron-builder / NSIS |
+
 ## 开发
 
 建议使用 Node.js 24 LTS、npm 与 Windows 11 x64。本项目锁定依赖版本，使用 Windows ConPTY。
@@ -61,6 +133,9 @@ npm run test:assistant
 npm run test:clipboard
 npm run test:fullscreen
 npm run test:connections
+npm run test:host-editor
+npm run test:composer
+npm run test:themes
 npm run test:ui-credentials
 npm run test:split
 npm run test:motion
@@ -95,3 +170,16 @@ npm run test:packaged
 ## 打包与发布
 
 运行 `npm run release`（或 `npm run release:setup`）生成 `artifacts/Omega-Terminal-Setup-0.1.9-x64.exe` 与 `SHA256SUMS.txt`。默认发布 Setup 安装程序；`npm run release:zip` 仅用于需要免安装包时。发布范围与检查步骤见 [发布说明](docs/发布说明.md)。源码仓库只保留构建所需的代码、资源、锁文件、测试与文档。
+
+
+## 反馈与参与
+
+欢迎通过 [GitHub Issues](https://github.com/pttman/Omega-Terminal/issues) 提交问题或功能建议。问题反馈请包含应用版本、Windows 版本、使用的 Shell、复现步骤与预期结果；附图或日志时请去掉密码、密钥和真实服务器信息。
+
+修改代码前可先阅读下列文档，使用 `npm ci` 准备依赖。修改终端或连接逻辑时，除单元测试外，也请运行对应的桌面验证脚本；界面改动可附上演示截图。
+
+| 文档 | 内容 |
+| --- | --- |
+| [产品需求文档](docs/产品需求文档.md) | 产品定位、原始需求与规划，具体交付以实现记录为准 |
+| [实现与验证记录](docs/实现与验证记录.md) | 已实现能力、验证范围和仍需验证的环境 |
+| [发布说明](docs/发布说明.md) | 版本变更、安装包内容与发布流程 |
