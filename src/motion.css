@@ -68,3 +68,14 @@
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
 }
+.app-shell.terminal-immersive>.sidebar,
+.app-shell.terminal-immersive>:not(.workspace),
+.terminal-immersive .titlebar,
+.terminal-immersive .statusbar,
+.terminal-immersive .terminal-toolbar,
+.terminal-immersive .workspace-body>:not(.main-content),
+.terminal-immersive .terminal-pane>:not(.terminal-surface),
+.terminal-immersive .pane-canvas>:not(.pane-slot){display:none!important}
+.terminal-immersive .workspace,.terminal-immersive .workspace-body,.terminal-immersive .main-content{margin:0;padding:0;border:0;border-radius:0}
+.terminal-immersive .pane-slot{padding:0}
+.terminal-immersive .terminal-pane{border:0;border-radius:0}

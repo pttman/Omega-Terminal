@@ -44,11 +44,8 @@ try{
   await page.getByRole('button',{name:'收起外观',exact:true}).click();
   await audit(page,'empty connections');
   await page.getByRole('button',{name:'新建连接',exact:true}).click();
-  await page.getByLabel('连接名称',{exact:true}).fill('主题测试服务器');
   await page.getByLabel('服务器地址',{exact:true}).fill('theme-test.invalid');
   await page.getByLabel('用户名',{exact:true}).fill('tester');
-  await page.getByLabel('分组',{exact:true}).fill('生产环境');
-  await page.getByRole('button',{name:'收藏',exact:true}).click();
   await page.getByRole('button',{name:'保存连接',exact:true}).click();
   for(const name of themes){
     await page.locator('.appearance-toggle').click();
@@ -56,14 +53,14 @@ try{
     await page.getByRole('button',{name:'收起外观',exact:true}).click();
     const id=await page.locator('html').getAttribute('data-palette');
     await audit(page,`${id}: home`);
-    for(const selector of ['.main-nav button:not(.active)','.button.primary','.local-card','.host-card','.window-controls button[title="最大化 / 还原"]']){
+    for(const selector of ['.button.primary','.local-card','.host-card','.window-controls button[title="最大化 / 还原"]']){
       const target=page.locator(selector).first();await target.hover();await page.waitForTimeout(150);
       await audit(page,`${id}: hover ${selector}`);
       await page.mouse.down();await page.waitForTimeout(150);await audit(page,`${id}: press ${selector}`);
       await page.mouse.move(5,5);await page.mouse.up();
     }
     await page.screenshot({path:`test-results/themes/${id}-home.png`});
-    await page.locator('.tools-nav').getByText('设置',{exact:true}).click();
+    await page.locator('.tools-nav').getByRole('button',{name:'设置',exact:true}).click();
     await expect(page.getByRole('combobox',{name:'界面主题',exact:true})).toHaveValue(id);
     await audit(page,`${id}: settings`);
     await page.screenshot({path:`test-results/themes/${id}-settings.png`});
@@ -74,8 +71,8 @@ try{
     await page.getByRole('button',{name:'关闭',exact:true}).last().click();
     await page.getByRole('button',{name:'新建连接',exact:true}).click();
     await audit(page,`${id}: host editor`);
-    await page.getByRole('button',{name:'关闭',exact:true}).last().click();
-    await page.locator('.tools-nav').getByText('AI 助手',{exact:true}).click();
+    await page.getByRole('button',{name:'关闭连接面板',exact:true}).click();
+    await page.getByRole('button',{name:'随行助手',exact:true}).click();
     await audit(page,`${id}: assistant`);
     await page.locator('.assistant-tabs').getByRole('button',{name:'命令手册',exact:true}).click();
     await audit(page,`${id}: manual`);
@@ -91,7 +88,7 @@ try{
     await audit(page,`${id}: transfers`);
     await page.getByRole('button',{name:'收起传输面板',exact:true}).click();
   }
-  await page.locator('.tools-nav').getByText('设置',{exact:true}).click();
+  await page.locator('.tools-nav').getByRole('button',{name:'设置',exact:true}).click();
   await page.getByRole('combobox',{name:'界面主题',exact:true}).selectOption('coral-paper');
   await page.getByRole('button',{name:'保存设置',exact:true}).click();
   await expect(page.locator('html')).toHaveAttribute('data-palette','coral-paper');

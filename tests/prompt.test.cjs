@@ -19,6 +19,25 @@ function bashPath(){
   }catch{}
 }
 
+test('Bash directory listings use bold blue while keeping custom aliases and other file colors',t=>{
+  const bash=bashPath();if(!bash)return t.skip('Bash is not installed');
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'omega-directory-'));
+  fs.mkdirSync(path.join(root,'folder'));fs.writeFileSync(path.join(root,'plain.txt'),'text');
+  try{
+    const setup=sshPrompt('directory-test').trim();
+    const output=execFileSync(bash,['--noprofile','--norc','-c',`LS_COLORS='ex=01;32:di=00;31'; ${setup}; alias ls; printf 'COLORS:%s\\n' "$LS_COLORS"; command ls --color=always -d folder plain.txt`],{cwd:root,encoding:'utf8',windowsHide:true,timeout:10000});
+    assert.match(output,/alias ls='ls --color=auto'/);
+    assert.match(output,/COLORS:ex=01;32:di=00;31:di=01;34/);
+    assert.match(output,/\x1b\[01;34mfolder\x1b\[0m/);
+    assert.ok(!output.includes('\x1b[01;34mplain.txt'));
+    for(const definition of ["alias ls='ls -lh'",'ls(){ command ls -lh "$@"; }']){
+      const preserved=execFileSync(bash,['--noprofile','--norc','-c',`${definition}; ${setup}; alias ls 2>/dev/null; declare -f ls; true`],{cwd:root,encoding:'utf8',windowsHide:true,timeout:10000});
+      assert.match(preserved,/ls -lh/);
+      assert.ok(!preserved.includes("alias ls='ls --color=auto'"));
+    }
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+
 test('Real interactive Bash hides initialization and keeps subsequent commands visible',{timeout:20000},async t=>{
   const bash=bashPath();if(!bash)return t.skip('Bash is not installed');
   const pty=require('node-pty');const token='interactive-test';const gate=new SshStartup(token);

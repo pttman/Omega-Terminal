@@ -32,10 +32,13 @@ export function promptColor(colors:ITheme):string {
 }
 
 export function terminalAppearance(colors:ITheme):ITheme {
+  const cursor=luminance(colors.background!)>.45?'#b51660':'#ff5ca8';
+  const cursorAccent=contrast(cursor,'#111111')>=contrast(cursor,'#ffffff')?'#111111':'#ffffff';
   const extendedAnsi=[...(colors.extendedAnsi??[])];
   // ANSI 214 is the prompt's gold. Palette changes also recolor existing prompts.
   extendedAnsi[214-16]=promptColor(colors);
-  return {...colors,extendedAnsi};
+  const directoryBlue=readable(luminance(colors.background!)>.45?'#286dbb':'#7db7ff',[colors.background!],luminance(colors.background!)>.45);
+  return {...colors,cursor,cursorAccent,blue:directoryBlue,brightBlue:directoryBlue,extendedAnsi};
 }
 
 export function appearanceTokens(colors:ITheme):{light:boolean;tokens:Record<string,string>} {

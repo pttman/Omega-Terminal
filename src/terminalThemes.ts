@@ -4,6 +4,7 @@ function palette(background:string, foreground:string, cursor:string, colors:str
   return {background, foreground, cursor, selectionBackground:cursor+'44', ...Object.fromEntries(keys.map((key,i)=>[key,colors[i]]))};
 }
 export const terminalThemes:Record<string,{name:string;colors:ITheme}> = {
+  midnight:{name:'Midnight · 午夜',colors:palette('#1f2132','#e8e9f2','#8da4ff',['#282b40','#f17c91','#94d4aa','#edcc87','#79a9eb','#d5a4ef','#87d5df','#e8e9f2','#787e9b','#ff9aac','#b2e7c1','#ffe0a3','#99bfff','#e8c1fc','#a6e9ef','#ffffff'])},
   'coral-paper':{name:'Ω · 珊瑚白',colors:palette('#fff8f4','#42332f','#c94135',['#392c30','#c73e45','#55834d','#936b28','#4879aa','#a65787','#347f80','#e7d9d3','#84706f','#ee655f','#80ad73','#d6aa66','#83a8d2','#d390b8','#75b5b0','#fff7f0'])},
   'coral-night':{name:'Ω · 珊瑚夜',colors:palette('#211a1d','#f4e2dd','#ff7569',['#392c30','#c73e45','#55834d','#936b28','#4879aa','#a65787','#347f80','#e7d9d3','#84706f','#ee655f','#80ad73','#d6aa66','#83a8d2','#d390b8','#75b5b0','#fff7f0'])},
   'coral-sand':{name:'Ω · 暖沙珊瑚',colors:palette('#f4e9da','#44372e','#bc483b',['#392c30','#c73e45','#55834d','#936b28','#4879aa','#a65787','#347f80','#e7d9d3','#84706f','#ee655f','#80ad73','#d6aa66','#83a8d2','#d390b8','#75b5b0','#fff7f0'])},
@@ -18,7 +19,7 @@ export const terminalThemes:Record<string,{name:string;colors:ITheme}> = {
 };
 const storageKey='person-terminal-color';
 export function readTerminalTheme():string {
-  try { const id=localStorage.getItem(storageKey)||'graphite'; return terminalThemes[id]?id:'graphite'; } catch { return 'graphite'; }
+  try { const id=localStorage.getItem(storageKey)||'midnight'; return terminalThemes[id]?id:'midnight'; } catch { return 'midnight'; }
 }
 export function saveTerminalTheme(id:string) {
   if(!terminalThemes[id])return;

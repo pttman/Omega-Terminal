@@ -3,17 +3,31 @@ const crypto=require('node:crypto');
 const fs=require('node:fs');
 const path=require('node:path');
 const os=require('node:os');
-async function sshFixture({echoStartup=false}={}){
+async function sshFixture({echoStartup=false,realShell}={}){
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'person-sftp-'));fs.mkdirSync(path.join(root,'uploads'));
   const {privateKey}=crypto.generateKeyPairSync('rsa',{modulusLength:2048,privateKeyEncoding:{type:'pkcs1',format:'pem'},publicKeyEncoding:{type:'spki',format:'pem'}});
-  const clients=new Set();const commands=[];
+  const clients=new Set();const commands=[];const shellProcesses=new Set();
   const resolve=remote=>{const resolved=path.resolve(root,'.'+String(remote).replace(/^\/home\/test/,''));if(resolved!==root&&!resolved.startsWith(root+path.sep))throw new Error('outside fixture');return resolved;};
   const server=new Server({hostKeys:[privateKey]},client=>{
     clients.add(client);client.on('close',()=>clients.delete(client));client.on('error',()=>{});
     client.on('authentication',ctx=>{if(ctx.username==='tester'&&ctx.method==='password'&&ctx.password==='fixture-password')ctx.accept();else if(ctx.username==='tester'&&ctx.method==='publickey')ctx.accept();else ctx.reject(['password','publickey']);});
     client.on('ready',()=>client.on('session',accept=>{
-      const session=accept();session.on('pty',accept=>accept?.());
-      session.on('shell',accept=>{const stream=accept();let token='';let pending='';stream.write('Fixture Linux shell\r\n');
+      const session=accept();let terminalSize={cols:100,rows:30},term;
+      session.on('pty',(accept,_reject,info)=>{terminalSize={cols:info.cols,rows:info.rows};accept?.();});
+      session.on('window-change',(accept,_reject,info)=>{term?.resize(Math.max(2,info.cols),Math.max(1,info.rows));accept?.();});
+      session.on('shell',accept=>{const stream=accept();
+        if(realShell){
+          term=require('node-pty').spawn(realShell,['--noprofile','--norc','-i'],{...terminalSize,name:'xterm-256color',cwd:root,env:{...process.env,TERM:'xterm-256color'},useConpty:true});
+          let stopped=false;
+          const stop=()=>{if(stopped)return;stopped=true;try{term.kill();}catch{}};
+          shellProcesses.add(stop);
+          term.onData(data=>{if(!stream.destroyed)stream.write(data);});
+          stream.on('data',data=>term.write(data.toString()));
+          term.onExit(()=>{shellProcesses.delete(stop);stop();if(!stream.destroyed)stream.end();});
+          stream.on('close',stop);
+          return;
+        }
+        let token='';let pending='';stream.write('Fixture Linux shell\r\n');
         stream.on('data',data=>{pending+=data.toString();let end;while((end=pending.indexOf('\r'))>=0){const line=pending.slice(0,end);pending=pending.slice(end+1);commands.push(line);
           if(line.includes('PROMPT_COMMAND')){token=line.match(/[a-f0-9]{40}/)?.[0]||'';if(echoStartup){stream.write(line+'\r\nroot@fixture:~# '+line+'\r\n');}stream.write(`\x1b]777;${token};S\x07`);}
           else {const output=Buffer.from(`执行完成 中文: ${line}\r\n`);stream.write(output.subarray(0,2));stream.write(output.subarray(2));}
@@ -40,7 +54,11 @@ async function sshFixture({echoStartup=false}={}){
     }));
   });
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-  return {port:server.address().port,root,commands,close:async()=>{for(const client of clients){client.end();client._sock?.destroy();}await new Promise(resolve=>server.close(resolve));}};
+  return {port:server.address().port,root,commands,close:async()=>{
+    for(const stop of shellProcesses)stop();
+    for(const client of clients){client.end();client._sock?.destroy();}
+    await new Promise(resolve=>server.close(resolve));
+  }};
 }
 function until(predicate,timeout=15000){return new Promise((resolve,reject)=>{const start=Date.now();const timer=setInterval(()=>{if(predicate()){clearInterval(timer);resolve();}else if(Date.now()-start>timeout){clearInterval(timer);reject(new Error('等待条件超时'));}},25);});}
 module.exports={sshFixture,until};

@@ -1,4 +1,4 @@
-const {app,BrowserWindow,ipcMain,dialog,safeStorage,shell}=require('electron');
+const {app,BrowserWindow,ipcMain,dialog,safeStorage,shell,clipboard,Menu}=require('electron');
 const path=require('node:path');
 const fs=require('node:fs');
 const crypto=require('node:crypto');
@@ -30,6 +30,13 @@ function handle(channel,fn){ipcMain.handle(channel,async(event,...args)=>{
   }catch(error){return {ok:false,error:error.message||'操作失败'};}
 });}
 function register(){
+  handle('clipboard:write',text=>{if(typeof text!=='string')throw new Error('无效的复制内容');if(text)clipboard.writeText(text);});
+  handle('terminal:contextMenu',text=>{
+    if(typeof text!=='string')throw new Error('无效的复制内容');
+    Menu.buildFromTemplate([
+      {label:'复制',accelerator:'CommandOrControl+C',enabled:!!text,click:()=>clipboard.writeText(text)},
+    ]).popup({window});
+  });
   handle('app:bootstrap',()=>({...store.publicData(),shells:availableShells().map(({executable,...shell})=>shell),sessions:sessions.list(),transfers:transfers.list(),version:app.getVersion(),runtime:{platform:process.platform,arch:process.arch,electron:process.versions.electron,chrome:process.versions.chrome}}));
   handle('app:repository',()=>shell.openExternal('https://github.com/pttman/Omega-Terminal'));
   handle('app:answerExit',(id,confirmed)=>{
@@ -51,6 +58,7 @@ function register(){
   handle('settings:save',value=>store.setSettings(value));handle('ai:settings',value=>store.setAi(value));
   handle('session:create',value=>sessions.create(value));handle('session:close',id=>sessions.close(id));
   handle('session:write',(id,data)=>sessions.write(id,data));handle('session:execute',(id,command)=>sessions.execute(id,command));
+  handle('session:interrupt',id=>sessions.interrupt(id));handle('session:cancelCommands',id=>sessions.cancelCommands(id));
   handle('session:resize',(id,cols,rows)=>sessions.resize(id,cols,rows));handle('session:buffer',id=>sessions.get(id).chunks);
   handle('completion:get',(id,text,cursor)=>completion.get(id,text,cursor));
   handle('ai:generate',value=>ai.generate(value));handle('ai:cancel',id=>ai.cancel(id));
@@ -69,7 +77,19 @@ function register(){
   handle('transfer:home',async id=>{const sftp=await sessions.sftp(id);return new Promise((resolve,reject)=>sftp.realpath('.',(error,value)=>error?reject(error):resolve(value)));});
   handle('transfer:list',async(id,directory)=>{directory=normalizeDirectory(directory);const sftp=await sessions.sftp(id);return new Promise((resolve,reject)=>sftp.readdir(directory,(error,values)=>error?reject(error):resolve(values.filter(value=>value.attrs.isDirectory()).map(value=>value.filename).filter(name=>name!=='.'&&name!=='..').sort())));});
   handle('question:answer',(id,value)=>{const question=questions.get(id);if(question){questions.delete(id);question.resolve(value);}});
-  handle('window:action',action=>{if(action==='minimize')window.minimize();if(action==='maximize'){if(window.isMaximized())window.unmaximize();else window.maximize();}if(action==='close')window.close();});
+  handle('window:state',()=>({fullscreen:window.isFullScreen(),maximized:window.isMaximized()}));
+  handle('window:action',action=>{
+    if(action==='minimize')window.minimize();
+    if(action==='maximize'){if(window.isMaximized())window.unmaximize();else window.maximize();}
+    if(action==='fullscreen')window.setFullScreen(!window.isFullScreen());
+    if(action==='restore'){
+      if(window.isFullScreen()){
+        window.once('leave-full-screen',()=>{if(window.isMaximized())window.unmaximize();});
+        window.setFullScreen(false);
+      }else if(window.isMaximized())window.unmaximize();
+    }
+    if(action==='close')window.close();
+  });
 }
 app.whenReady().then(()=>{
   store=new Store(app.getPath('userData'),safeStorage);sessions=new Sessions(store,ask);completion=new Completion(sessions);ai=new Ai(store,sessions);transfers=new Transfers(sessions,ask);
@@ -78,6 +98,7 @@ app.whenReady().then(()=>{
   window=new BrowserWindow({icon:path.join(__dirname,'../public/omega.ico'),title:'Ω-Terminal',width:1440,height:940,minWidth:1000,minHeight:680,show:false,backgroundColor:'#121418',frame:false,
     webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,webSecurity:true}});
   window.setMenu(null);window.webContents.setWindowOpenHandler(()=>({action:'deny'}));
+  for(const event of ['enter-full-screen','leave-full-screen','maximize','unmaximize'])window.on(event,()=>send('window:state',{fullscreen:window.isFullScreen(),maximized:window.isMaximized()}));
   window.webContents.on('will-navigate',(event,url)=>{const current=window.webContents.getURL();if(url!==current)event.preventDefault();});
   window.webContents.on('will-attach-webview',event=>event.preventDefault());
   window.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback)=>callback(false));

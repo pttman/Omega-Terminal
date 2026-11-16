@@ -4,6 +4,7 @@ import App from './App';
 import './styles.css';
 import './theme.css';
 import './motion.css';
+import './connections.css';
 
 // Load the bundled font before xterm measures its grid cells.
 void Promise.all([

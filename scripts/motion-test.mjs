@@ -38,7 +38,7 @@ try{
   await page.locator('.theme-cards button').last().click();await pause(350);await page.screenshot({path:`${directory}/appearance-alternate.png`});
   await page.getByRole('button',{name:'收起外观',exact:true}).click();
   await page.getByRole('button',{name:'新建连接',exact:true}).click();
-  await page.getByLabel('连接名称',{exact:true}).fill('动画测试');await page.getByLabel('服务器地址',{exact:true}).fill('127.0.0.1');
+  await page.getByLabel('服务器地址',{exact:true}).fill('127.0.0.1');
   await page.getByLabel('端口',{exact:true}).fill(String(fixture.port));await page.getByLabel('用户名',{exact:true}).fill('tester');
   await page.getByRole('button',{name:'保存并连接',exact:true}).click();
   await page.getByLabel('密码（交互认证可留空）',{exact:true}).fill('fixture-password');
